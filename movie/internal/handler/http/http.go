@@ -39,4 +39,7 @@ func (h *Handler) GetMovieDetails(w http.ResponseWriter, req *http.Request) {
 	if err := json.NewEncoder(w).Encode(details); err != nil {
 		log.Printf("Response encode error: %v\n", err)
 	}
+
+	// Show details in the console
+	log.Printf("Movie details: %v\n", details)
 }

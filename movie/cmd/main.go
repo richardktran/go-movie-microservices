@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	port := 8003
+	port := 8083
 	log.Printf("Starting the movie service with port %v...", port)
 	metadataGateway := metadataGateway.New("localhost:8081")
 	ratingGateway := ratingGateway.New("localhost:8082")
