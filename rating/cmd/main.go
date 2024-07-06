@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/richardktran/go-movie-microservices/rating/internal/controller/rating"
@@ -10,7 +11,8 @@ import (
 )
 
 func main() {
-	fmt.Println("Starting rating service...")
+	port := 8082
+	log.Println("Starting rating service with port %v...", port)
 
 	repo := memory.New()
 	ctrl := rating.New(repo)
@@ -18,7 +20,7 @@ func main() {
 
 	http.Handle("/rating", http.HandlerFunc(h.Handle))
 
-	if err := http.ListenAndServe(":8082", nil); err != nil {
+	if err := http.ListenAndServe(fmt.Sprintf(":%v", port), nil); err != nil {
 		panic(err)
 	}
 }

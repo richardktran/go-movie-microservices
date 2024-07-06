@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -10,7 +11,8 @@ import (
 )
 
 func main() {
-	log.Println("Starting the movie metadata service")
+	port := 8081
+	log.Printf("Starting the movie metadata service with port %v...", port)
 
 	repo := memory.New()
 	ctrl := metadata.New(repo)
@@ -18,7 +20,7 @@ func main() {
 
 	http.Handle("/metadata", http.HandlerFunc(h.GetMetadata))
 
-	if err := http.ListenAndServe(":8081", nil); err != nil {
+	if err := http.ListenAndServe(fmt.Sprintf(":%v", port), nil); err != nil {
 		panic(err)
 	}
 }
