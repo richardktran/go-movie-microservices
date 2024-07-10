@@ -5,15 +5,18 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"net/http"
+	"net"
 	"time"
 
+	"github.com/richardktran/go-movie-microservices/gen"
 	"github.com/richardktran/go-movie-microservices/movie/internal/controller/movie"
-	metadataGateway "github.com/richardktran/go-movie-microservices/movie/internal/gateway/metadata/http"
-	ratingGateway "github.com/richardktran/go-movie-microservices/movie/internal/gateway/rating/http"
-	movieHandler "github.com/richardktran/go-movie-microservices/movie/internal/handler/http"
+	metadataGateway "github.com/richardktran/go-movie-microservices/movie/internal/gateway/metadata/grpc"
+	ratingGateway "github.com/richardktran/go-movie-microservices/movie/internal/gateway/rating/grpc"
+	movieGrpcHandler "github.com/richardktran/go-movie-microservices/movie/internal/handler/grpc"
 	"github.com/richardktran/go-movie-microservices/pkg/discovery"
 	"github.com/richardktran/go-movie-microservices/pkg/discovery/consul"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
 const serviceName = "movie"
@@ -51,12 +54,29 @@ func main() {
 	ratingGateway := ratingGateway.New(registry)
 
 	ctrl := movie.New(ratingGateway, metadataGateway)
-	h := movieHandler.New(ctrl)
 
-	http.Handle("/movie", http.HandlerFunc(h.GetMovieDetails))
+	h := movieGrpcHandler.New(ctrl)
 
-	if err := http.ListenAndServe(fmt.Sprintf(":%v", port), nil); err != nil {
-		panic(err)
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%v", port))
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
 	}
+
+	server := grpc.NewServer()
+	reflection.Register(server)
+	gen.RegisterMovieServiceServer(server, h)
+
+	if err := server.Serve(lis); err != nil {
+		log.Fatalf("failed to serve: %v", err)
+	}
+
+	// =============== This section is for HTTP handler ===============
+	// h := movieHttpHandler.New(ctrl)
+
+	// http.Handle("/movie", http.HandlerFunc(h.GetMovieDetails))
+
+	// if err := http.ListenAndServe(fmt.Sprintf(":%v", port), nil); err != nil {
+	// 	panic(err)
+	// }
 
 }

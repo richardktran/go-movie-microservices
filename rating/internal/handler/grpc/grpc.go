@@ -3,6 +3,7 @@ package grpc
 import (
 	"context"
 	"errors"
+	"log"
 
 	"github.com/richardktran/go-movie-microservices/gen"
 	"github.com/richardktran/go-movie-microservices/rating/internal/controller/rating"
@@ -21,6 +22,7 @@ func New(ctrl *rating.Controller) *Handler {
 }
 
 func (h *Handler) GetAggregatedRating(ctx context.Context, req *gen.GetAggregatedRatingRequest) (*gen.GetAggregatedRatingResponse, error) {
+	log.Printf("GetAggregatedRating request: %v", req)
 	if req == nil || req.GetRecordId() == "" || req.GetRecordType() == "" {
 		return nil, status.Errorf(codes.InvalidArgument, "nil req or empty record id or record type")
 	}
@@ -36,6 +38,7 @@ func (h *Handler) GetAggregatedRating(ctx context.Context, req *gen.GetAggregate
 }
 
 func (h *Handler) PutRating(ctx context.Context, req *gen.PutRatingRequest) (*gen.PutRatingResponse, error) {
+	log.Printf("PutRating request: %v", req)
 	if req != nil || req.GetRecordId() == "" || req.GetRecordType() == "" || req.GetRatingValue() == 0 {
 		return nil, status.Errorf(codes.InvalidArgument, "nil req or empty record id or record type or rating value")
 	}

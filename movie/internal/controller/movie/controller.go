@@ -14,7 +14,7 @@ var ErrNotFound = errors.New("not found")
 
 type ratingGateway interface {
 	GetAggregatedRating(context.Context, ratingModel.RecordID, ratingModel.RecordType) (float64, error)
-	PutRating(context.Context, ratingModel.RecordID, ratingModel.RecordType, *ratingModel.Rating) error
+	// PutRating(context.Context, ratingModel.RecordID, ratingModel.RecordType, *ratingModel.Rating) error
 }
 
 type metadataGateway interface {
