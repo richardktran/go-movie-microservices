@@ -5,6 +5,6 @@ run-rating:
 run-movie:
 	@go run movie/cmd/*.go
 protoc:
-	@protoc -I=api --go_out=. movie.proto
+	@protoc -I=api --go_out=. --go-grpc_out=. movie.proto
 benchmark:
 	@go test cmd/sizecompare/*.go -bench=.

@@ -5,14 +5,17 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"net/http"
+	"net"
 	"time"
 
+	"github.com/richardktran/go-movie-microservices/gen"
 	"github.com/richardktran/go-movie-microservices/pkg/discovery"
 	"github.com/richardktran/go-movie-microservices/pkg/discovery/consul"
 	"github.com/richardktran/go-movie-microservices/rating/internal/controller/rating"
-	httpHandler "github.com/richardktran/go-movie-microservices/rating/internal/handler/http"
+	grpcHandler "github.com/richardktran/go-movie-microservices/rating/internal/handler/grpc"
 	"github.com/richardktran/go-movie-microservices/rating/internal/repository/memory"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
 var serviceName = "rating"
@@ -48,11 +51,28 @@ func main() {
 
 	repo := memory.New()
 	ctrl := rating.New(repo)
-	h := httpHandler.New(ctrl)
 
-	http.Handle("/rating", http.HandlerFunc(h.Handle))
+	// =============== This section is for gRPC handler ===============
+	h := grpcHandler.New(ctrl)
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%v", port))
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
+	}
 
-	if err := http.ListenAndServe(fmt.Sprintf(":%v", port), nil); err != nil {
+	server := grpc.NewServer()
+	reflection.Register(server)
+	gen.RegisterRatingServiceServer(server, h)
+
+	if err := server.Serve(lis); err != nil {
 		panic(err)
 	}
+
+	// =============== This section is for HTTP handler ===============
+	// h := httpHandler.New(ctrl)
+
+	// http.Handle("/rating", http.HandlerFunc(h.Handle))
+
+	// if err := http.ListenAndServe(fmt.Sprintf(":%v", port), nil); err != nil {
+	// 	panic(err)
+	// }
 }

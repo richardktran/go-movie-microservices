@@ -20,7 +20,7 @@ var metadata = &model.Metadata{
 var genMetadata = &gen.Metadata{
 	Id:          "1",
 	Title:       "The Shawshank Redemption",
-	Desctiption: "Two imprisoned",
+	Description: "Two imprisoned",
 	Director:    "Frank Darabont",
 }
 
