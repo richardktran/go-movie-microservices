@@ -1,0 +1,18 @@
+[
+    {
+        "user_id": "105",
+        "record_id": "1",
+        "record_type": "movie",
+        "value": 5,
+        "provider_id": "test-provider",
+        "event_type": "put"
+    },
+    {
+        "user_id": "105",
+        "record_id": "2",
+        "record_type": "movie",
+        "value": 4,
+        "provider_id": "test-provider",
+        "event_type": "put"
+    }
+]
