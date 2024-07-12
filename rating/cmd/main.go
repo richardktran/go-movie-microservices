@@ -13,6 +13,7 @@ import (
 	"github.com/richardktran/go-movie-microservices/pkg/discovery/consul"
 	"github.com/richardktran/go-movie-microservices/rating/internal/controller/rating"
 	grpcHandler "github.com/richardktran/go-movie-microservices/rating/internal/handler/grpc"
+	"github.com/richardktran/go-movie-microservices/rating/internal/ingester/kafka"
 	"github.com/richardktran/go-movie-microservices/rating/internal/repository/memory"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -50,7 +51,13 @@ func main() {
 	defer registry.Deregister(ctx, instanceID, serviceName)
 
 	repo := memory.New()
-	ctrl := rating.New(repo)
+
+	ingester, err := kafka.NewIngester("localhost:9092", "rating", "rating")
+	if err != nil {
+		panic(err)
+	}
+
+	ctrl := rating.New(repo, ingester)
 
 	// =============== This section is for gRPC handler ===============
 	h := grpcHandler.New(ctrl)
