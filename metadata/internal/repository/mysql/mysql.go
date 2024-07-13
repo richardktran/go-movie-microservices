@@ -36,6 +36,7 @@ func (r *Repository) Get(ctx context.Context, id string) (*model.Metadata, error
 	}
 
 	return &model.Metadata{
+		ID:          id,
 		Title:       title,
 		Description: description,
 		Director:    director,
