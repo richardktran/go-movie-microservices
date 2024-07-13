@@ -39,7 +39,7 @@ func (h *Handler) GetAggregatedRating(ctx context.Context, req *gen.GetAggregate
 
 func (h *Handler) PutRating(ctx context.Context, req *gen.PutRatingRequest) (*gen.PutRatingResponse, error) {
 	log.Printf("PutRating request: %v", req)
-	if req != nil || req.GetRecordId() == "" || req.GetRecordType() == "" || req.GetRatingValue() == 0 {
+	if req == nil || req.GetRecordId() == "" || req.GetUserId() == "" {
 		return nil, status.Errorf(codes.InvalidArgument, "nil req or empty record id or record type or rating value")
 	}
 

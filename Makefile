@@ -1,7 +1,7 @@
 run-metadata:
 	@go run metadata/cmd/*.go
 run-rating:
-	@go run rating/cmd/*.go
+	@go run rating/cmd/main.go
 run-movie:
 	@go run movie/cmd/*.go
 protoc:
