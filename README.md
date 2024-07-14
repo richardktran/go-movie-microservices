@@ -39,3 +39,27 @@ Run consumer
 cd rating/cmd/consumer
 go run main.go
 ```
+
+## Deployment
+Build metadata binary file and docker images
+```bash
+make build-metadata
+make docker-build-metadata
+docker tag metadata richardktran/metadata:1.0.0
+docker push richardktran/metadata:1.0.0
+```
+Build rating binary file and docker images
+```bash
+make build-rating
+make docker-build-rating
+docker tag rating richardktran/rating:1.0.0
+docker push richardktran/rating:1.0.0
+```
+Build movie binary file and docker images
+```bash
+make build-movie
+make docker-build-movie
+docker tag movie richardktran/movie:1.0.0
+docker push richardktran/movie:1.0.0
+```
+
