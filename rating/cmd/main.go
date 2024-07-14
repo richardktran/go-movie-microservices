@@ -2,10 +2,10 @@ package main
 
 import (
 	"context"
-	"flag"
 	"fmt"
 	"log"
 	"net"
+	"os"
 	"time"
 
 	"github.com/richardktran/go-movie-microservices/gen"
@@ -16,14 +16,32 @@ import (
 	"github.com/richardktran/go-movie-microservices/rating/internal/repository/mysql"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
+	"gopkg.in/yaml.v3"
 )
 
 var serviceName = "rating"
 
+type serviceConfig struct {
+	APIConfig apiConfig `yaml:"api"`
+}
+
+type apiConfig struct {
+	Port string `yaml:"port"`
+}
+
 func main() {
-	var port int
-	flag.IntVar(&port, "port", 8082, "The server port")
-	flag.Parse()
+	f, err := os.Open("base.yaml")
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+
+	var cfg serviceConfig
+	if err := yaml.NewDecoder(f).Decode(&cfg); err != nil {
+		panic(err)
+	}
+
+	port := cfg.APIConfig.Port
 	log.Printf("Starting rating service with port %v...", port)
 
 	// Register the rating service
